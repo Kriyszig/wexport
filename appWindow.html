@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Wexport</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+</head>
+<body>
+        <nav>
+                <div class="nav-wrapper purple accent-3">
+                        <a class="brand-logo center">Wexport</a>   
+                </div>
+        </nav>
+        <div class="container center-align">
+                <br><br>
+                <form>
+                        <div>
+                                <label>Enter URL:</label>
+                                <input type="text" id="URL" autofocus>
+                        </div>
+                        <button class="wave-effect waves-light btn" type="submit">Submit</button>
+                </form>
+                <br>
+                <div class="red-text accent-4" id="invalid">Invalid URL Entered</div>
+                <div class="green-text accent-3" id="downloading">Downloading</div>
+                <label id="title-history"></label>
+                <div>
+                        <ul></ul>
+                </div>
+        </div>
+        <script>
+                const electron = require('electron');
+                const {ipcRenderer} = electron;
+                document.querySelector('form').addEventListener('submit', sendURL);
+                const down = document.getElementById('downloading')
+                const inval = document.getElementById('invalid');
+                down.style.display = 'none';
+                inval.style.display = 'none';
+
+                function sendURL(e){
+                        e.preventDefault();
+                        const URL = document.querySelector('#URL').value;
+                        document.querySelector('#URL').value = '';
+                        ipcRenderer.send('URL:submit', URL);
+                }
+
+                ipcRenderer.on('update:history', function (e, history){
+                        if(document.querySelector('#title-history').innerHTML == ''){
+                                document.querySelector('#title-history').innerHTML = 'History';
+                        }
+                        const ul = document.querySelector('ul');
+                        const li = document.createElement('li');
+                        const itemText = document.createTextNode(history);
+                        li.appendChild(itemText);
+                        ul.appendChild(li);
+                });
+
+                ipcRenderer.on('download:start', function (e){
+                        down.style.display = 'block';
+                });
+
+                ipcRenderer.on('URL:invalid', function (e){
+                        inval.style.display = 'block';
+                        setTimeout(function (){
+                                inval.style.display = 'none';
+                        }, 5000);
+                });
+
+                ipcRenderer.on('download:finish', function (e){
+                        down.style.display = 'none';
+                });
+
+                ipcRenderer.on('clear:history', function (e){
+                        document.querySelector('#title-history').innerHTML = '';
+                        document.querySelector('ul').innerHTML = '';
+                });
+        </script>
+</body>
+</html>

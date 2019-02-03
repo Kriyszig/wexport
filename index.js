@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const {app, BrowserWindow, Menu, ipcMain} = electron;
 
-let appWindow, history = [];
+let appWindow;
 
 app.on('ready', () => {
         appWindow = new BrowserWindow({

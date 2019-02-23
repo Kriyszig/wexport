@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron ."
   },
-  "author": "VisibleMarkov",
+  "author": "Kriyszig",
   "license": "MIT",
   "dependencies": {
     "electron": "^4.0.2",
